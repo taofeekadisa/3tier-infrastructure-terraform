@@ -40,3 +40,47 @@ resource "azurerm_subnet_network_security_group_association" "nsg-snet" {
 }
 
 #NSG Rules
+resource "azurerm_network_security_rule" "web-nsg-rule" {
+  for_each                    = local.web-nsg-rules
+  name                        = each.value.name
+  priority                    = each.value.priority
+  direction                   = each.value.direction
+  access                      = each.value.access
+  protocol                    = each.value.protocol
+  source_port_range           = each.value.source_port_range
+  destination_port_range      = each.value.destination_port_range
+  source_address_prefix       = each.value.source_address_prefix
+  destination_address_prefix  = each.value.destination_address_prefix
+  resource_group_name         = azurerm_resource_group.dev-rg.name
+  network_security_group_name = var.network_security_group.web-snet
+}
+
+resource "azurerm_network_security_rule" "api-nsg-rule" {
+  for_each                    = local.api-nsg-rules
+  name                        = each.value.name
+  priority                    = each.value.priority
+  direction                   = each.value.direction
+  access                      = each.value.access
+  protocol                    = each.value.protocol
+  source_port_range           = each.value.source_port_range
+  destination_port_range      = each.value.destination_port_range
+  source_address_prefix       = each.value.source_address_prefix
+  destination_address_prefix  = each.value.destination_address_prefix
+  resource_group_name         = azurerm_resource_group.dev-rg.name
+  network_security_group_name = var.network_security_group.api-snet
+}
+
+resource "azurerm_network_security_rule" "db-nsg-rule" {
+  for_each                    = local.db-nsg-rules
+  name                        = each.value.name
+  priority                    = each.value.priority
+  direction                   = each.value.direction
+  access                      = each.value.access
+  protocol                    = each.value.protocol
+  source_port_range           = each.value.source_port_range
+  destination_port_range      = each.value.destination_port_range
+  source_address_prefix       = each.value.source_address_prefix
+  destination_address_prefix  = each.value.destination_address_prefix
+  resource_group_name         = azurerm_resource_group.dev-rg.name
+  network_security_group_name = var.network_security_group.db-snet
+}

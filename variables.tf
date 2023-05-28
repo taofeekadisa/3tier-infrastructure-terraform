@@ -45,12 +45,6 @@ variable "network_security_group" {
   }
 }
 
-
-#variable "network_security_group" {
-#type    = list(string)
-#default = ["web-nsg", "api-nsg", "db-nsg"]
-#}
-
 variable "nsg-snet" {
   type = map(string)
   default = {
@@ -60,15 +54,4 @@ variable "nsg-snet" {
   }
 }
 
-variable "web-nsg" {
-  type = 
-  name                        = ["rule1", "rule2", "rule3"]
-  priority                    = [100, 130, 160]
-  direction                   = ["Inbound", "Outbound"]
-  access                      = "Allow"
-  protocol                    = "Tcp"
-  source_port_range           = "*"
-  destination_port_range      = "*"
-  source_address_prefix       = "*"
-  destination_address_prefix  = "*"
-}
+
