@@ -54,4 +54,49 @@ variable "nsg-snet" {
   }
 }
 
+variable "network_interface" {
+  type = map(string)
+  default = {
+    "vm_nic1" = "web-snet"
+    "vm-nic2" = "api-snet"
+    "vm-nic3" = "db-snet"
+  }
+}
+
+variable "ip_config" {
+  type        = string
+  default     = "internal"
+  description = "IP Configuration"
+}
+
+variable "azure_vm" {
+  type = map(string)
+  default = {
+    "vm1" = "web-vm"
+    "vm2" = "api-vm"
+    "vm3" = "db-vm"
+  }
+}
+
+variable "username" {
+  type        = string
+  default     = "adminuser"
+  description = "username"
+}
+
+variable "pswd" {
+  type        = string
+  default     = "Knixat@12345"
+  description = "pswd"
+}
+
+variable "os_disk" {
+  type = map(string)
+  default = {
+    os_disk1 = "myosdisk1"
+    os_disk2 = "myosdisk2"
+    os_disk3 = "myosdisk3"
+  }
+  description = "storage_os_disk"
+}
 

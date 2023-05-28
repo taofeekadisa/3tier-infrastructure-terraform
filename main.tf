@@ -84,3 +84,54 @@ resource "azurerm_network_security_rule" "db-nsg-rule" {
   resource_group_name         = azurerm_resource_group.dev-rg.name
   network_security_group_name = var.network_security_group.db-snet
 }
+
+#Create NIC
+resource "azurerm_network_interface" "nic" {
+  for_each            = var.network_interface
+  name                = each.key
+  location            = azurerm_resource_group.dev-rg.location
+  resource_group_name = azurerm_resource_group.dev-rg.name
+
+  ip_configuration {
+    name                          = var.ip_config
+    subnet_id                     = azurerm_subnet.dev-snet[each.value].id
+    private_ip_address_allocation = "Dynamic"
+  }
+}
+
+#Create 3 VMs
+resource "azurerm_virtual_machine" "main" {
+  for_each              = var.azure_vm
+  name                  = each.value
+  location              = azurerm_resource_group.dev-rg.location
+  resource_group_name   = azurerm_resource_group.dev-rg.name
+  network_interface_ids = var.network_interface[each.key].id
+  vm_size               = "Standard_B1s"
+
+  delete_os_disk_on_termination = true
+
+  storage_image_reference {
+    publisher = "Canonical"
+    offer     = "0001-com-ubuntu-server-jammy"
+    sku       = "22_04-lts-gen2"
+    version   = "latest"
+  }
+  storage_os_disk {
+    #for_each          = var.os_disk
+    name              = each.value
+    caching           = "ReadWrite"
+    create_option     = "FromImage"
+    managed_disk_type = "Standard_LRS"
+  }
+  os_profile {
+    computer_name  = "hostname"
+    admin_username = var.username
+    admin_password = var.pswd
+  }
+  os_profile_linux_config {
+    disable_password_authentication = false
+  }
+  tags = {
+    Environment = var.tags.Environment
+  }
+}
