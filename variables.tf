@@ -22,19 +22,53 @@ variable "tags" {
 variable "virtual_network" {
   type = map(string)
   default = {
-    "vnet" = "taofeek-vnet"
-    "snet1" = "web-snet"
-    "snet2" = "api-snet"
-    snet3 = "db-snet"
+    "vnet"    = "taofeek-vnet"
+    "address" = "10.0.0.0/16"
   }
 }
 
-variable "address_prefixes" {
+variable "sub_network" {
   type = map(string)
   default = {
-    "vnet" = "10.0.0.0/16"
-    "snet1" = "10.0.0.0/24"
-    "snet2" = "10.0.1.0/24"
-    "snet2" = "10.0.2.0/24"
+    "web-snet" = "10.0.0.0/24"
+    "api-snet" = "10.0.1.0/24"
+    "db-snet"  = "10.0.2.0/24"
   }
+}
+
+variable "network_security_group" {
+  type = map(string)
+  default = {
+    "web-snet" = "web-nsg"
+    "api-snet" = "api-nsg"
+    "db-snet"  = "db-nsg"
+  }
+}
+
+
+#variable "network_security_group" {
+#type    = list(string)
+#default = ["web-nsg", "api-nsg", "db-nsg"]
+#}
+
+variable "nsg-snet" {
+  type = map(string)
+  default = {
+    "web-snet" = "web-nsg"
+    "api-snet" = "api-nsg"
+    "db-snet"  = "db-nsg"
+  }
+}
+
+variable "web-nsg" {
+  type = 
+  name                        = ["rule1", "rule2", "rule3"]
+  priority                    = [100, 130, 160]
+  direction                   = ["Inbound", "Outbound"]
+  access                      = "Allow"
+  protocol                    = "Tcp"
+  source_port_range           = "*"
+  destination_port_range      = "*"
+  source_address_prefix       = "*"
+  destination_address_prefix  = "*"
 }
