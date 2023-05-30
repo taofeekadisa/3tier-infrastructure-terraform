@@ -54,13 +54,32 @@ variable "nsg-snet" {
   }
 }
 
+
+
 variable "network_interface" {
-  type = map(string)
+  type = map(object({
+    name = string
+    #subnet_id               = string
+    network_interface_ids = list(string)
+  }))
   default = {
-    "vm_nic1" = "web-snet"
-    "vm-nic2" = "api-snet"
-    "vm-nic3" = "db-snet"
+    "vm-nic1" = {
+      name = "web-nic"
+      #subnet_id               = var.sub_network["web-snet"]
+      network_interface_ids = []
+    }
+    "vm-nic2" = {
+      name = "api-nic"
+      #subnet_id               = var.sub_network["api-snet"]
+      network_interface_ids = []
+    }
+    "vm-nic3" = {
+      name = "db-nic"
+      #subnet_id               = var.sub_network["db-snet"]
+      network_interface_ids = []
+    }
   }
+  description = "Network interface details"
 }
 
 variable "ip_config" {
@@ -69,34 +88,38 @@ variable "ip_config" {
   description = "IP Configuration"
 }
 
+
 variable "azure_vm" {
-  type = map(string)
+  type = map(object({
+    name     = string
+    size     = string
+    username = string
+    password = string
+    os_disk  = string
+  }))
   default = {
-    "vm1" = "web-vm"
-    "vm2" = "api-vm"
-    "vm3" = "db-vm"
+    "vm1" = {
+      name     = "web-vm"
+      size     = "Standard_B1s"
+      username = "adminuser"
+      password = "Knixat@12345"
+      os_disk  = "myosdisk1"
+    }
+    "vm2" = {
+      name     = "api-vm"
+      size     = "Standard_B1s"
+      username = "adminuser"
+      password = "Knixat@12345"
+      os_disk  = "myosdisk2"
+    }
+    "vm3" = {
+      name     = "db-vm"
+      size     = "Standard_B1s"
+      username = "adminuser"
+      password = "Knixat@12345"
+      os_disk  = "myosdisk3"
+    }
   }
-}
-
-variable "username" {
-  type        = string
-  default     = "adminuser"
-  description = "username"
-}
-
-variable "pswd" {
-  type        = string
-  default     = "Knixat@12345"
-  description = "pswd"
-}
-
-variable "os_disk" {
-  type = map(string)
-  default = {
-    os_disk1 = "myosdisk1"
-    os_disk2 = "myosdisk2"
-    os_disk3 = "myosdisk3"
-  }
-  description = "storage_os_disk"
+  description = "VM details"
 }
 

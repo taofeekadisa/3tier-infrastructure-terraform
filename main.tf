@@ -86,9 +86,9 @@ resource "azurerm_network_security_rule" "db-nsg-rule" {
 }
 
 #Create NIC
-resource "azurerm_network_interface" "nic" {
-  for_each            = var.network_interface
-  name                = each.key
+resource "azurerm_network_interface" "dev-nic" {
+  for_each            = var.azure_vm
+  name                = "${each.value.name}-nic"
   location            = azurerm_resource_group.dev-rg.location
   resource_group_name = azurerm_resource_group.dev-rg.name
 
@@ -102,11 +102,11 @@ resource "azurerm_network_interface" "nic" {
 #Create 3 VMs
 resource "azurerm_virtual_machine" "main" {
   for_each              = var.azure_vm
-  name                  = each.value
+  name                  = each.value.name
   location              = azurerm_resource_group.dev-rg.location
   resource_group_name   = azurerm_resource_group.dev-rg.name
-  network_interface_ids = var.network_interface[each.key].id
-  vm_size               = "Standard_B1s"
+  network_interface_ids = [azurerm_network_interface.dev-nic[each.value].id]
+  vm_size               = each.value.size
 
   delete_os_disk_on_termination = true
 
@@ -118,15 +118,15 @@ resource "azurerm_virtual_machine" "main" {
   }
   storage_os_disk {
     #for_each          = var.os_disk
-    name              = each.value
+    name              = each.value.os_disk
     caching           = "ReadWrite"
     create_option     = "FromImage"
     managed_disk_type = "Standard_LRS"
   }
   os_profile {
     computer_name  = "hostname"
-    admin_username = var.username
-    admin_password = var.pswd
+    admin_username = each.value.username
+    admin_password = each.value.password
   }
   os_profile_linux_config {
     disable_password_authentication = false
@@ -135,3 +135,7 @@ resource "azurerm_virtual_machine" "main" {
     Environment = var.tags.Environment
   }
 }
+
+# output "network_interface_ids" {
+#   value = azurerm_network_interface.id
+# }
